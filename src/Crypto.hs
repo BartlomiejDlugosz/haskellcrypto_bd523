@@ -77,7 +77,7 @@ genKeys :: Int -> Int -> ((Int, Int), (Int, Int))
 genKeys p q = ((e, n), (d, n))
         where
                 n = p * q
-                prod = ((p - 1) * (q - 1))
+                prod = (p - 1) * (q - 1)
                 e = smallestCoPrimeOf prod
                 d = inverse e prod
 
@@ -85,13 +85,13 @@ genKeys p q = ((e, n), (d, n))
 rsaEncrypt :: Int        -- ^ value to encrypt
            -> (Int, Int) -- ^ public key
            -> Int
-rsaEncrypt = undefined
+rsaEncrypt x (e, n)= modPow x e n
 
 -- | This function performs RSA decryption
 rsaDecrypt :: Int        -- ^ value to decrypt
            -> (Int, Int) -- ^ public key
            -> Int
-rsaDecrypt = undefined
+rsaDecrypt c (d, n) = modPow c d n
 
 -------------------------------------------------------------------------------
 -- PART 2 : symmetric encryption
