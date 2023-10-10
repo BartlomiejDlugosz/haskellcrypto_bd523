@@ -48,6 +48,8 @@ gcdTests = [ gcd 0 0      --> 0  -- gcd.#1
            , gcd 16 12    --> 4  -- gcd.#6
            , gcd 65 40    --> 5  -- gcd.#7
            , gcd 735 1239 --> 21 -- gcd.#8
+           , gcd 69287728 2126524 --> 4
+           , gcd 496561417 536779565 --> 1
            ]
 
 phiTests :: [Assertion]
