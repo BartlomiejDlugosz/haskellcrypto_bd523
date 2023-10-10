@@ -135,12 +135,14 @@ toIntTests :: [Assertion]
 toIntTests = [ toInt 'a' --> 0
              , toInt 'z' --> 25
              , toInt 'h' --> 7
+             , [toInt n | n <- ['a'..'z']] --> [0..25]
              ]
 
 toCharTests :: [Assertion]
 toCharTests = [ toChar 0  --> 'a'
               , toChar 25 --> 'z'
               , toChar 7  --> 'h'
+              , [toChar n | n <- [0..25]] --> ['a'..'z']
               ]
 
 addTests :: [Assertion]

@@ -98,19 +98,19 @@ rsaDecrypt c (d, n) = modPow c d n
 
 -- | Returns position of a letter in the alphabet
 toInt :: Char -> Int
-toInt = undefined
+toInt c = ord c - ord 'a'
 
 -- | Returns the n^th letter
 toChar :: Int -> Char
-toChar = undefined
+toChar n = chr (n `mod` (toInt 'z' + 1) + ord 'a')
 
 -- | "adds" two letters
 add :: Char -> Char -> Char
-add = undefined
+add a b = toChar (toInt a + toInt b)
 
 -- | "subtracts" two letters
 subtract :: Char -> Char -> Char
-subtract = undefined
+subtract a b = toChar (toInt a - toInt b)
 
 -- the next functions present
 -- 2 modes of operation for block ciphers : ECB and CBC
@@ -118,22 +118,28 @@ subtract = undefined
 
 -- | ecb (electronic codebook) encryption with block size of a letter
 ecbEncrypt :: Char -> [Char] -> [Char]
-ecbEncrypt = undefined
+ecbEncrypt k = map (`add` k)
 
 -- | ecb (electronic codebook) decryption with a block size of a letter
 ecbDecrypt :: Char -> [Char] -> [Char]
-ecbDecrypt = undefined
+ecbDecrypt k = map (`subtract` k)
 
 -- | cbc (cipherblock chaining) encryption with block size of a letter
 cbcEncrypt :: Char   -- ^ public key
            -> Char   -- ^ initialisation vector `iv`
            -> [Char] -- ^ message `m`
            -> [Char]
-cbcEncrypt = undefined
+cbcEncrypt _ _ [] = []
+cbcEncrypt k iv (m:ms) = ci : cbcEncrypt k ci ms
+        where 
+                ci = head (ecbEncrypt k [m `add` iv])
 
 -- | cbc (cipherblock chaining) decryption with block size of a letter
 cbcDecrypt :: Char   -- ^ private key
            -> Char   -- ^ initialisation vector `iv`
            -> [Char] -- ^ message `m`
            -> [Char]
-cbcDecrypt = undefined
+cbcDecrypt _ _ [] = []
+cbcDecrypt k iv (c:cs) = xi : cbcDecrypt k c cs
+        where
+                xi = head (ecbDecrypt k [c]) `subtract` iv
