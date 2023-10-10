@@ -23,30 +23,51 @@ via the aymmetric RSA.
 
 -- | Returns the greatest common divisor of its two arguments
 gcd :: Int -> Int -> Int
-gcd = undefined
+gcd m n
+        | n == 0 = m
+        | otherwise = gcd n (m `mod` n)
 
 -- | Euler Totient function
 phi :: Int -> Int
-phi = undefined
+phi m = length [1 | n <- [1..m], gcd m n == 1]
 
 {-|
 Calculates (u, v, d) the gcd (d) and Bezout coefficients (u and v)
 such that au + bv = d
 -}
 computeCoeffs :: Int -> Int -> (Int, Int)
-computeCoeffs = undefined
+computeCoeffs a b 
+        | b == 0 = (1, 0)
+        | otherwise = (v, u - q * v)
+        where 
+                (q, r) = quotRem a b
+                (u, v) = computeCoeffs b r
 
 -- | Inverse of a modulo m
 inverse :: Int -> Int -> Int
-inverse = undefined
+inverse a m = ((1 - m * v) `div` a) `mod` m
+        where
+                (_, v) = computeCoeffs a m
 
 -- | Calculates (a^k mod m)
 modPow :: Int -> Int -> Int -> Int
-modPow = undefined
+modPow a k m
+        | k < 3 = a^k `mod` m
+        | even k = ak
+        | otherwise = (a * ak) `mod` m
+        where 
+                ak = modPow (modPow a 2 m) (k `div` 2) m
+
+-- | Helps the smallestCoPrimeOf function by providing an additional parameter
+-- | to help loop through the numbers from 2 onwards
+smallestCoPrimeHelper :: Int -> Int -> Int
+smallestCoPrimeHelper a n
+        | gcd a n == 1 = n
+        | otherwise = smallestCoPrimeHelper a (n + 1)
 
 -- | Returns the smallest integer that is coprime with phi
 smallestCoPrimeOf :: Int -> Int
-smallestCoPrimeOf = undefined
+smallestCoPrimeOf a = smallestCoPrimeHelper a 2
 
 {-|
 Generates keys pairs (public, private) = ((e, n), (d, n))
