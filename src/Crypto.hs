@@ -74,7 +74,12 @@ Generates keys pairs (public, private) = ((e, n), (d, n))
 given two "large" distinct primes, p and q
 -}
 genKeys :: Int -> Int -> ((Int, Int), (Int, Int))
-genKeys = undefined
+genKeys p q = ((e, n), (d, n))
+        where
+                n = p * q
+                prod = ((p - 1) * (q - 1))
+                e = smallestCoPrimeOf prod
+                d = inverse e prod
 
 -- | This function performs RSA encryption
 rsaEncrypt :: Int        -- ^ value to encrypt
