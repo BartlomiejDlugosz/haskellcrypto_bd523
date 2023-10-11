@@ -24,7 +24,7 @@ via the aymmetric RSA.
 -- | Returns the greatest common divisor of its two arguments
 gcd :: Int -> Int -> Int
 gcd m n
-        | n == 0 = m
+        | n == 0 = abs m
         | otherwise = gcd n (m `mod` n)
 
 -- | Euler Totient function
@@ -45,7 +45,9 @@ computeCoeffs a b
 
 -- | Inverse of a modulo m
 inverse :: Int -> Int -> Int
-inverse a m = ((1 - m * v) `div` a) `mod` m
+inverse a m 
+        | a /= 0 = ((1 - m * v) `div` a) `mod` m
+        | otherwise = 0
         where
                 (_, v) = computeCoeffs a m
 

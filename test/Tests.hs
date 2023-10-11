@@ -50,6 +50,10 @@ gcdTests = [ gcd 0 0      --> 0  -- gcd.#1
            , gcd 735 1239 --> 21 -- gcd.#8
            , gcd 69287728 2126524 --> 4
            , gcd 496561417 536779565 --> 1
+           , gcd 10 5 --> 5
+           , gcd 12 13 --> 1
+           , gcd (-10) 5 --> 5
+           , gcd (-12) (-16) --> 4 
            ]
 
 phiTests :: [Assertion]
@@ -62,6 +66,11 @@ phiTests = [ phi 0  --> 0
            , phi 31 --> 30
            , phi 35 --> 24
            , phi 77 --> 60
+           , phi 123456 --> 41088
+           , phi 375264 --> 124992
+           , phi 83 --> 82
+           , phi 97 --> 96
+           , phi 8633 --> 8448
            ]
 
 modPowTests :: [Assertion]
@@ -76,6 +85,8 @@ modPowTests = [ modPow 0 0 1                   --> 0
               , modPow 33893 2 10000           --> 5449
               , modPow 7433893 2 10000         --> 5449
               , modPow 13481503 11237126 46340 --> 6629
+              , modPow 383823875 198805018 94732 --> 14161
+              , modPow 287068094 376560844 541782 --> 406738
               ]
 
 computeCoeffsTests :: [Assertion]
@@ -85,6 +96,9 @@ computeCoeffsTests = [ computeCoeffs 0 0      --> (1, 0)
                      , computeCoeffs 16 12    --> (1, -1)
                      , computeCoeffs 65 40    --> (-3, 5)
                      , computeCoeffs 735 1239 --> (27, -16)
+                     , computeCoeffs 123 456  --> (-63, 17)
+                     , computeCoeffs 173981 519041 --> (-182970, 61331)
+                     , computeCoeffs (-7) (-5) --> (-2, 3)
                      ]
 
 inverseTests :: [Assertion]
@@ -95,6 +109,9 @@ inverseTests = [ inverse 11 16 --> 3
                , inverse 12 91 --> 38
                , inverse 34 91 --> 83
                , inverse 64 91 --> 64
+               , inverse 78932 1423 --> 1391
+               , inverse 0 1 --> 0
+               , inverse 1 1 --> 0
                ]
 
 smallestCoPrimeOfTests :: [Assertion]
@@ -104,6 +121,11 @@ smallestCoPrimeOfTests = [ smallestCoPrimeOf 1   --> 2
                          , smallestCoPrimeOf 13  --> 2
                          , smallestCoPrimeOf 30  --> 7
                          , smallestCoPrimeOf 210 --> 11
+                         , smallestCoPrimeOf 3628800 --> 11
+                         , smallestCoPrimeOf 355687428096000 --> 19
+                         , smallestCoPrimeOf 5 --> 2
+                         , smallestCoPrimeOf (-1) --> 2
+                         , smallestCoPrimeOf (-13) --> 2
                          ]
 
 genKeysTests :: [Assertion]
@@ -113,6 +135,7 @@ genKeysTests = [ genKeys 2 3         --> ((3,6),(1,6))
                , genKeys 401 937     --> ((7,375737),(213943,375737))
                , genKeys 613 997     --> ((5,611161),(243821,611161))
                , genKeys 26641 26437 --> ((7,704308117),(100607863,704308117))
+               , genKeys 149 181     --> ((7,26969),(15223,26969))
                ]
 
 rsaEncryptTests :: [Assertion]
@@ -120,6 +143,7 @@ rsaEncryptTests = [ rsaEncrypt 4321 (3,8383)            --> 3694
                   , rsaEncrypt 324561 (5, 611161)       --> 133487
                   , rsaEncrypt 1234 (5,611161)          --> 320878
                   , rsaEncrypt 704308111 (7, 704308117) --> 704028181
+                  , rsaEncrypt 15 (7,26969)             --> 10760
                   ]
 
 rsaDecryptTests :: [Assertion]
@@ -127,6 +151,7 @@ rsaDecryptTests = [ rsaDecrypt 3694 (5467,8383)                --> 4321
                   , rsaDecrypt 133487 (243821,611161)          --> 324561
                   , rsaDecrypt 320878 (243821,611161)          --> 1234
                   , rsaDecrypt 704028181 (100607863,704308117) --> 704308111
+                  , rsaDecrypt 10760 (15223,26969)             --> 15
                   ]
 
 -------------------------------------------------------------------------------
