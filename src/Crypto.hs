@@ -24,7 +24,7 @@ via the aymmetric RSA.
 -- | Returns the greatest common divisor of its two arguments
 gcd :: Int -> Int -> Int
 gcd m n
-        | n == 0 = abs m
+        | n == 0    = abs m
         | otherwise = gcd n (m `mod` n)
 
 -- | Euler Totient function
@@ -37,7 +37,7 @@ such that au + bv = d
 -}
 computeCoeffs :: Int -> Int -> (Int, Int)
 computeCoeffs a b 
-        | b == 0 = (1, 0)
+        | b == 0    = (1, 0)
         | otherwise = (v, u - q * v)
         where 
                 (q, r) = quotRem a b
@@ -46,7 +46,7 @@ computeCoeffs a b
 -- | Inverse of a modulo m
 inverse :: Int -> Int -> Int
 inverse a m 
-        | a /= 0 = ((1 - m * v) `div` a) `mod` m
+        | a /= 0    = ((1 - m * v) `div` a) `mod` m
         | otherwise = 0
         where
                 (_, v) = computeCoeffs a m
@@ -54,8 +54,8 @@ inverse a m
 -- | Calculates (a^k mod m)
 modPow :: Int -> Int -> Int -> Int
 modPow a k m
-        | k < 3 = a^k `mod` m
-        | even k = ak
+        | k < 3     = a^k `mod` m
+        | even k    = ak
         | otherwise = (a * ak) `mod` m
         where 
                 ak = modPow (modPow a 2 m) (k `div` 2) m
@@ -65,7 +65,7 @@ modPow a k m
 smallestCoPrimeHelper :: Int -> Int -> Int
 smallestCoPrimeHelper a n
         | gcd a n == 1 = n
-        | otherwise = smallestCoPrimeHelper a (n + 1)
+        | otherwise    = smallestCoPrimeHelper a (n + 1)
 
 -- | Returns the smallest integer that is coprime with phi
 smallestCoPrimeOf :: Int -> Int
@@ -78,10 +78,10 @@ given two "large" distinct primes, p and q
 genKeys :: Int -> Int -> ((Int, Int), (Int, Int))
 genKeys p q = ((e, n), (d, n))
         where
-                n = p * q
+                n    = p * q
                 prod = (p - 1) * (q - 1)
-                e = smallestCoPrimeOf prod
-                d = inverse e prod
+                e    = smallestCoPrimeOf prod
+                d    = inverse e prod
 
 -- | This function performs RSA encryption
 rsaEncrypt :: Int        -- ^ value to encrypt
