@@ -1,10 +1,25 @@
-module Crypto ( gcd, smallestCoPrimeOf, phi, computeCoeffs, inverse
-              , modPow, genKeys, rsaEncrypt, rsaDecrypt, toInt, toChar
-              , add, subtract, ecbEncrypt, ecbDecrypt
-              , cbcEncrypt, cbcDecrypt ) where
+module Crypto
+  ( gcd,
+    smallestCoPrimeOf,
+    phi,
+    computeCoeffs,
+    inverse,
+    modPow,
+    genKeys,
+    rsaEncrypt,
+    rsaDecrypt,
+    toInt,
+    toChar,
+    add,
+    subtract,
+    ecbEncrypt,
+    ecbDecrypt,
+    cbcEncrypt,
+    cbcDecrypt,
+  )
+where
 
 import Data.Char
-
 import Prelude hiding (gcd, subtract)
 
 {-
@@ -24,75 +39,79 @@ via the aymmetric RSA.
 -- | Returns the greatest common divisor of its two arguments
 gcd :: Int -> Int -> Int
 gcd m n
-        | n == 0    = abs m
-        | otherwise = gcd n (m `mod` n)
+  | n == 0 = abs m
+  | otherwise = gcd n (m `mod` n)
 
 -- | Euler Totient function
 phi :: Int -> Int
-phi m = length [1 | n <- [1..m], gcd m n == 1]
+phi m = length [1 | n <- [1 .. m], gcd m n == 1]
 
-{-|
-Calculates (u, v, d) the gcd (d) and Bezout coefficients (u and v)
-such that au + bv = d
--}
+-- |
+-- Calculates (u, v, d) the gcd (d) and Bezout coefficients (u and v)
+-- such that au + bv = d
 computeCoeffs :: Int -> Int -> (Int, Int)
-computeCoeffs a b 
-        | b == 0    = (1, 0)
-        | otherwise = (v, u - q * v)
-        where 
-                (q, r) = quotRem a b
-                (u, v) = computeCoeffs b r
+computeCoeffs a b
+  | b == 0 = (1, 0)
+  | otherwise = (v, u - q * v)
+  where
+    (q, r) = quotRem a b
+    (u, v) = computeCoeffs b r
 
 -- | Inverse of a modulo m
 inverse :: Int -> Int -> Int
-inverse a m 
-        | a /= 0    = u `mod` m
-        | otherwise = 0
-        where
-                (u, _) = computeCoeffs a m
+inverse a m
+  | a /= 0 = u `mod` m
+  | otherwise = 0
+  where
+    (u, _) = computeCoeffs a m
 
 -- | Calculates (a^k mod m)
 modPow :: Int -> Int -> Int -> Int
 modPow a k m
-        | k < 3     = (a `mod` m)^k `mod` m
-        | even k    = ak
-        | otherwise = (a * ak) `mod` m
-        where 
-                ak = modPow (modPow a 2 m) (k `div` 2) m
+  | k < 3 = (a `mod` m) ^ k `mod` m
+  | even k = ak
+  | otherwise = (a * ak) `mod` m
+  where
+    ak = modPow (modPow a 2 m) (k `div` 2) m
 
 -- | Helps the smallestCoPrimeOf function by providing an additional parameter
 -- | to help loop through the numbers from 2 onwards
 smallestCoPrimeHelper :: Int -> Int -> Int
 smallestCoPrimeHelper a n
-        | gcd a n == 1 = n
-        | otherwise    = smallestCoPrimeHelper a (n + 1)
+  | gcd a n == 1 = n
+  | otherwise = smallestCoPrimeHelper a (n + 1)
 
 -- | Returns the smallest integer that is coprime with phi
 smallestCoPrimeOf :: Int -> Int
 smallestCoPrimeOf a = smallestCoPrimeHelper a 2
 
-{-|
-Generates keys pairs (public, private) = ((e, n), (d, n))
-given two "large" distinct primes, p and q
--}
+-- |
+-- Generates keys pairs (public, private) = ((e, n), (d, n))
+-- given two "large" distinct primes, p and q
 genKeys :: Int -> Int -> ((Int, Int), (Int, Int))
 genKeys p q = ((e, n), (d, n))
-        where
-                n    = p * q
-                prod = (p - 1) * (q - 1)
-                e    = smallestCoPrimeOf prod
-                d    = inverse e prod
+  where
+    n = p * q
+    prod = (p - 1) * (q - 1)
+    e = smallestCoPrimeOf prod
+    d = inverse e prod
 
 -- | This function performs RSA encryption
-rsaEncrypt :: Int        -- ^ value to encrypt
-           -> (Int, Int) -- ^ public key
-           -> Int
-rsaEncrypt x (e, n)= modPow x e n
+rsaEncrypt ::
+  -- | value to encrypt
+  Int ->
+  -- | public key
+  (Int, Int) ->
+  Int
+rsaEncrypt x (e, n) = modPow x e n
 
 -- | This function performs RSA decryption
-rsaDecrypt :: Int        -- ^ value to decrypt
-           -> (Int, Int) -- ^ public key
-           -> Int
+rsaDecrypt ::
+  -- | value to decrypt
+  Int ->
+  -- | public key
+  (Int, Int) ->
+  Int
 rsaDecrypt c (d, n) = modPow c d n
 
 -------------------------------------------------------------------------------
@@ -127,21 +146,29 @@ ecbDecrypt :: Char -> [Char] -> [Char]
 ecbDecrypt k = map (`subtract` k)
 
 -- | cbc (cipherblock chaining) encryption with block size of a letter
-cbcEncrypt :: Char   -- ^ public key
-           -> Char   -- ^ initialisation vector `iv`
-           -> [Char] -- ^ message `m`
-           -> [Char]
+cbcEncrypt ::
+  -- | public key
+  Char ->
+  -- | initialisation vector `iv`
+  Char ->
+  -- | message `m`
+  [Char] ->
+  [Char]
 cbcEncrypt _ _ [] = []
-cbcEncrypt k iv (m:ms) = ci : cbcEncrypt k ci ms
-        where 
-                ci = head (ecbEncrypt k [m `add` iv])
+cbcEncrypt k iv (m : ms) = ci : cbcEncrypt k ci ms
+  where
+    ci = (m `add` iv) `add` k
 
 -- | cbc (cipherblock chaining) decryption with block size of a letter
-cbcDecrypt :: Char   -- ^ private key
-           -> Char   -- ^ initialisation vector `iv`
-           -> [Char] -- ^ message `m`
-           -> [Char]
+cbcDecrypt ::
+  -- | private key
+  Char ->
+  -- | initialisation vector `iv`
+  Char ->
+  -- | message `m`
+  [Char] ->
+  [Char]
 cbcDecrypt _ _ [] = []
-cbcDecrypt k iv (c:cs) = xi : cbcDecrypt k c cs
-        where
-                xi = head (ecbDecrypt k [c]) `subtract` iv
+cbcDecrypt k iv (c : cs) = xi : cbcDecrypt k c cs
+  where
+    xi = (c `subtract` k) `subtract` iv
