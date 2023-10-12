@@ -54,7 +54,7 @@ inverse a m
 -- | Calculates (a^k mod m)
 modPow :: Int -> Int -> Int -> Int
 modPow a k m
-        | k < 3     = a^k `mod` m
+        | k < 3     = (a `mod` m)^k `mod` m
         | even k    = ak
         | otherwise = (a * ak) `mod` m
         where 
