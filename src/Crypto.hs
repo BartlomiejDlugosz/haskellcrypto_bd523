@@ -46,10 +46,10 @@ computeCoeffs a b
 -- | Inverse of a modulo m
 inverse :: Int -> Int -> Int
 inverse a m 
-        | a /= 0    = ((1 - m * v) `div` a) `mod` m
+        | a /= 0    = u `mod` m
         | otherwise = 0
         where
-                (_, v) = computeCoeffs a m
+                (u, _) = computeCoeffs a m
 
 -- | Calculates (a^k mod m)
 modPow :: Int -> Int -> Int -> Int
